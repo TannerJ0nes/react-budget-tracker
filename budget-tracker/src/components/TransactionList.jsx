@@ -1,32 +1,19 @@
 function TransactionList({ transactions, onDelete }) {
-  if (transactions.length === 0) {
-    return <p>No transactions yet.</p>;
-  }
-
   return (
-    <div>
-      <h3>Transactions</h3>
+    <>
+      <h2>Transactions</h2>
       <ul>
         {transactions.map((t) => (
-          <li
-            key={t.id}
-            className={t.amount > 0 ? "plus" : "minus"}
-          >
+          <li key={t.id} className={t.amount >= 0 ? "positive" : "negative"}>
             <span>
-              <strong>{t.text}</strong>
-              <br />
-              <small>{t.category}</small>
+              {t.description} — ${Math.abs(t.amount).toFixed(2)} ({t.category})
             </span>
-
-            <span>
-              ${t.amount}
-              <button onClick={() => onDelete(t.id)}>❌</button>
-            </span>
+            <button onClick={() => onDelete(t.id)}>❌</button>
           </li>
         ))}
       </ul>
-    </div>
-  );
+    </>
+  )
 }
 
-export default TransactionList;
+export default TransactionList

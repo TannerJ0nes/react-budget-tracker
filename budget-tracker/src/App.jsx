@@ -1,55 +1,95 @@
-import TransactionForm from "./components/TransactionForm";
-import TransactionList from "./components/TransactionList";
-import useLocalStorage from "./hooks/useLocalStorage";
+import { useState, useEffect } from "react"
+import TransactionForm from "./components/TransactionForm"
+import TransactionList from "./components/TransactionList"
+import "./App.css"
 
 function App() {
-  const [transactions, setTransactions] = useLocalStorage("transactions", []);
+  const [transactions, setTransactions] = useState(() => {
+    const saved = localStorage.getItem("transactions")
+    return saved ? JSON.parse(saved) : []
+  })
 
-  const addTransaction = (transaction) => {
-    setTransactions([...transactions, transaction]);
-  };
+  const [description, setDescription] = useState("")
+  const [amount, setAmount] = useState("")
+  const [category, setCategory] = useState("Income")
+
+  useEffect(() => {
+    localStorage.setItem("transactions", JSON.stringify(transactions))
+  }, [transactions])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!description || !amount) return
+
+    const numericAmount =
+      category === "Income"
+        ? Math.abs(Number(amount))
+        : -Math.abs(Number(amount))
+
+    const newTransaction = {
+      id: crypto.randomUUID(),
+      description,
+      amount: numericAmount,
+      category,
+    }
+
+    setTransactions([...transactions, newTransaction])
+    setDescription("")
+    setAmount("")
+    setCategory("Income")
+  }
 
   const deleteTransaction = (id) => {
-    setTransactions(transactions.filter(t => t.id !== id));
-  };
+    setTransactions(transactions.filter((t) => t.id !== id))
+  }
 
-  const income = transactions
-    .filter(t => t.amount > 0)
-    .reduce((total, t) => total + t.amount, 0);
+  const balance = transactions.reduce(
+    (total, transaction) => total + transaction.amount,
+    0
+  )
 
-  const expenses = transactions
-    .filter(t => t.amount < 0)
-    .reduce((total, t) => total + t.amount, 0);
-
-  const balance = income + expenses;
+  const categoryTotals = transactions.reduce((acc, transaction) => {
+    const { category, amount } = transaction
+    acc[category] = (acc[category] || 0) + amount
+    return acc
+  }, {})
 
   return (
-    <div className="app">
+    <div className="container">
       <h1>Budget Tracker</h1>
 
-      <div className="balance">
-        <h2>Balance</h2>
-        <h3>${balance}</h3>
-      </div>
+      <h2>
+        Balance:{" "}
+        <span className={balance >= 0 ? "positive" : "negative"}>
+          ${balance.toFixed(2)}
+        </span>
+      </h2>
 
-      <div className="summary">
-        <div className="income">
-          <h4>Income</h4>
-          <p>${income}</p>
-        </div>
-        <div className="expense">
-          <h4>Expenses</h4>
-          <p>${Math.abs(expenses)}</p>
-        </div>
-      </div>
+      <TransactionForm
+        description={description}
+        setDescription={setDescription}
+        amount={amount}
+        setAmount={setAmount}
+        category={category}
+        setCategory={setCategory}
+        onSubmit={handleSubmit}
+      />
 
-      <TransactionForm onAdd={addTransaction} />
       <TransactionList
         transactions={transactions}
         onDelete={deleteTransaction}
       />
+
+      <h2>Category Totals</h2>
+      <ul>
+        {Object.entries(categoryTotals).map(([cat, total]) => (
+          <li key={cat}>
+            {cat}: ${Math.abs(total).toFixed(2)}
+          </li>
+        ))}
+      </ul>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -1,43 +1,19 @@
-import { useState } from "react";
-
-function TransactionForm({ onAdd }) {
-  const [text, setText] = useState("");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("Income");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!text || !amount) return;
-
-    const numericAmount = Number(amount);
-
-    const finalAmount =
-      category === "Income"
-        ? Math.abs(numericAmount)
-        : -Math.abs(numericAmount);
-
-    onAdd({
-      id: Date.now(),
-      text,
-      amount: finalAmount,
-      category
-    });
-
-    setText("");
-    setAmount("");
-    setCategory("Income");
-  };
-
+function TransactionForm({
+  description,
+  setDescription,
+  amount,
+  setAmount,
+  category,
+  setCategory,
+  onSubmit,
+}) {
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Add Transaction</h3>
-
+    <form onSubmit={onSubmit}>
       <input
         type="text"
         placeholder="Description"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
       />
 
       <input
@@ -59,9 +35,9 @@ function TransactionForm({ onAdd }) {
         <option value="Other">Other</option>
       </select>
 
-      <button type="submit">Add</button>
+      <button type="submit">Add Transaction</button>
     </form>
-  );
+  )
 }
 
-export default TransactionForm;
+export default TransactionForm
