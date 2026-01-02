@@ -1,11 +1,16 @@
-import { useState } from "react";
 import TransactionForm from "./components/TransactionForm";
+import TransactionList from "./components/TransactionList";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 function App() {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useLocalStorage("transactions", []);
 
   const addTransaction = (transaction) => {
     setTransactions([...transactions, transaction]);
+  };
+
+  const deleteTransaction = (id) => {
+    setTransactions(transactions.filter(t => t.id !== id));
   };
 
   const income = transactions
@@ -27,6 +32,10 @@ function App() {
       <p>Expenses: ${Math.abs(expenses)}</p>
 
       <TransactionForm onAdd={addTransaction} />
+      <TransactionList
+        transactions={transactions}
+        onDelete={deleteTransaction}
+      />
     </div>
   );
 }
