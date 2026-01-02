@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import TransactionForm from "./components/TransactionForm"
 import TransactionList from "./components/TransactionList"
+import SpendingChart from "./components/SpendingChart"
 import "./App.css"
 
 function App() {
@@ -55,41 +56,52 @@ function App() {
   }, {})
 
   return (
-    <div className="container">
-      <h1>Budget Tracker</h1>
+  <div className="container">
+    <h1>Budget Tracker</h1>
 
-      <h2>
-        Balance:{" "}
-        <span className={balance >= 0 ? "positive" : "negative"}>
-          ${balance.toFixed(2)}
-        </span>
-      </h2>
+    <h2>
+      Balance:{" "}
+      <span className={balance >= 0 ? "positive" : "negative"}>
+        ${balance.toFixed(2)}
+      </span>
+    </h2>
 
-      <TransactionForm
-        description={description}
-        setDescription={setDescription}
-        amount={amount}
-        setAmount={setAmount}
-        category={category}
-        setCategory={setCategory}
-        onSubmit={handleSubmit}
-      />
+    <div className="layout">
+      {/* LEFT SIDE */}
+      <div className="left-panel">
+        <TransactionForm
+          description={description}
+          setDescription={setDescription}
+          amount={amount}
+          setAmount={setAmount}
+          category={category}
+          setCategory={setCategory}
+          onSubmit={handleSubmit}
+        />
 
-      <TransactionList
-        transactions={transactions}
-        onDelete={deleteTransaction}
-      />
+        <TransactionList
+          transactions={transactions}
+          onDelete={deleteTransaction}
+        />
 
-      <h2>Category Totals</h2>
-      <ul>
-        {Object.entries(categoryTotals).map(([cat, total]) => (
-          <li key={cat}>
-            {cat}: ${Math.abs(total).toFixed(2)}
-          </li>
-        ))}
-      </ul>
+        <h2>Category Totals</h2>
+        <ul>
+          {Object.entries(categoryTotals).map(([cat, total]) => (
+            <li key={cat}>
+              {cat}: ${Math.abs(total).toFixed(2)}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="right-panel">
+        <SpendingChart categoryTotals={categoryTotals} />
+      </div>
     </div>
-  )
+  </div>
+)
+
 }
 
 export default App
