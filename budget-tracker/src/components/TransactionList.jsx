@@ -12,7 +12,12 @@ function TransactionList({ transactions, onDelete }) {
             key={t.id}
             className={t.amount > 0 ? "plus" : "minus"}
           >
-            {t.text}
+            <span>
+              <strong>{t.text}</strong>
+              <br />
+              <small>{t.category}</small>
+            </span>
+
             <span>
               ${t.amount}
               <button onClick={() => onDelete(t.id)}>❌</button>
