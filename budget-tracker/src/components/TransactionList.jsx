@@ -8,9 +8,15 @@ function TransactionList({ transactions, onDelete }) {
       <h3>Transactions</h3>
       <ul>
         {transactions.map((t) => (
-          <li key={t.id}>
-            {t.text} — ${t.amount}
-            <button onClick={() => onDelete(t.id)}>❌</button>
+          <li
+            key={t.id}
+            className={t.amount > 0 ? "plus" : "minus"}
+          >
+            {t.text}
+            <span>
+              ${t.amount}
+              <button onClick={() => onDelete(t.id)}>❌</button>
+            </span>
           </li>
         ))}
       </ul>

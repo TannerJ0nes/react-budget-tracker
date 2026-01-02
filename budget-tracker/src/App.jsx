@@ -24,12 +24,24 @@ function App() {
   const balance = income + expenses;
 
   return (
-    <div>
+    <div className="app">
       <h1>Budget Tracker</h1>
 
-      <h2>Balance: ${balance}</h2>
-      <p>Income: ${income}</p>
-      <p>Expenses: ${Math.abs(expenses)}</p>
+      <div className="balance">
+        <h2>Balance</h2>
+        <h3>${balance}</h3>
+      </div>
+
+      <div className="summary">
+        <div className="income">
+          <h4>Income</h4>
+          <p>${income}</p>
+        </div>
+        <div className="expense">
+          <h4>Expenses</h4>
+          <p>${Math.abs(expenses)}</p>
+        </div>
+      </div>
 
       <TransactionForm onAdd={addTransaction} />
       <TransactionList
